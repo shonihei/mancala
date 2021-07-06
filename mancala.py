@@ -234,6 +234,16 @@ class Game:
         return Board([[beans_per_tile for i in range(tile_count)] for i in range(2)])
 
 if __name__ == "__main__":
-    b = Game.make_board(6, 4)
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--num_tiles_per_player", help="Number of tiles on each player's sides. 6 by default", type=int, default=6)
+    parser.add_argument("--num_beans_per_tile", help="Number of beans per tile. 4 by default", type=int, default=4)
+    parser.add_argument("--ai_first", help="Whether or not the AI player goes first. False by default", action="store_true", default=False)
+    parser.add_argument("--num_lookahead", help="How many lookaheads the AI player will do. 5 by default", type=int, default=5)
+    args = parser.parse_args()
+
+    b = Game.make_board(args.num_tiles_per_player, args.num_beans_per_tile)
     g = Game(b, [Player(b, 0), SmartPlayer(b, 1, 5)])
+    if args.ai_first:
+      g = Game(b, [SmartPlayer(b, 0, args.num_lookahead), Player(b, 1)])
     g.start()
